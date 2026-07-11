@@ -12,6 +12,14 @@ class LieuAffectation extends Model {
 
     protected $fillable = ['nom', 'type', 'code'];
 
+    /**
+     * Utilise le "code" (ex: SFI, RECT) comme clé de route
+     * afin que /rapports/{lieu} fonctionne avec le code lisible.
+     */
+    public function getRouteKeyName(): string {
+        return 'code';
+    }
+
     public function agents(): HasMany {
         return $this->hasMany(Agent::class);
     }

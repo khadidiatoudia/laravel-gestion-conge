@@ -33,11 +33,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/agents/{agent}/link-user', [AgentController::class, 'attachUser'])->name('agents.linkUser');
         Route::delete('/agents/{agent}/unlink-user', [AgentController::class, 'detachUser'])->name('agents.unlinkUser');
 
-        // Rapports & Exports PDF
+        // Rapports & Exports PDF / Excel
         Route::get('/rapports', [RapportController::class, 'index'])->name('rapports.index');
-        Route::post('/rapports', [RapportController::class, 'generer'])->name('rapports.generer');
-        Route::post('/rapports/pdf', [RapportController::class, 'exportPdf'])->name('rapports.pdf');
-        Route::post('/rapports-global/pdf', [RapportController::class, 'exportAll'])->name('rapports.all');
+        Route::get('/rapports/{lieu}', [RapportController::class, 'generer'])->name('rapports.generer');
+        Route::get('/rapports/{lieu}/pdf', [RapportController::class, 'exportPdf'])->name('rapports.pdf');
+        Route::get('/rapports/{lieu}/csv', [RapportController::class, 'exportCsv'])->name('rapports.csv');
+        Route::get('/rapports-global/pdf', [RapportController::class, 'exportAll'])->name('rapports.all');
+        Route::get('/rapports-global/csv', [RapportController::class, 'exportAllCsv'])->name('rapports.all.csv');
 
         // Jours Fériés
         Route::get('/jours-feries', [JourFerieController::class, 'index'])->name('jours_feries.index');

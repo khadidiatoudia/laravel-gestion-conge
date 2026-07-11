@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class Agent extends Model {
     protected $fillable = [
-        'nom', 'prenom', 'matricule_solde', 'lieu_affectation_id',
+        'nom', 'prenom', 'matricule_solde', 'type_personnel', 'lieu_affectation_id',
         'date_prise_service', 'sexe', 'nombre_enfants',
         'conges_reportes', 'conges_exceptionnels', 'actif'
     ];

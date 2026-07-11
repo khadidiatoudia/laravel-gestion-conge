@@ -124,12 +124,10 @@
                                         </option>
                                     @endforeach
                                 @else
-                                    {{-- Sécurité : Données statiques de secours de l'USSEIN si la table est vide --}}
-                                    <option value="1" {{ old('lieu_affectation_id') == '1' ? 'selected' : '' }}>SAEPAN - UFR Sciences Agronomiques, d'Élevage, de Pêche-Aquaculture et de Nutrition</option>
-                                    <option value="2" {{ old('lieu_affectation_id') == '2' ? 'selected' : '' }}>SFI - UFR Sciences Fondamentales et de l'Ingénieur</option>
-                                    <option value="3" {{ old('lieu_affectation_id') == '3' ? 'selected' : '' }}>SSE - UFR Sciences Sociales et Environnementles</option>
-                                    <option value="4" {{ old('lieu_affectation_id') == '4' ? 'selected' : '' }}>SEJT - UFR Sciences Économiques, Juridiques et Touristiques</option>
-                                    <option value="5" {{ old('lieu_affectation_id') == '5' ? 'selected' : '' }}>RECT - Rectorat et Services Administratifs Centraux</option>
+                                    {{-- Sécurité : aucune structure en base. On ne propose plus de fausses
+                                         données statiques (elles ne correspondaient plus à la vraie liste
+                                         des UFR/Directions). On avertit plutôt l'admin. --}}
+                                    <option value="" disabled>Aucune structure trouvée — lancez le seeder (php artisan db:seed)</option>
                                 @endif
                             </select>
                             @error('lieu_affectation_id') <div class="invalid-feedback">{{ $message }}</div> @enderror

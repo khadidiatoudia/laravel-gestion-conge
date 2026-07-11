@@ -26,10 +26,10 @@ class DatabaseSeeder extends Seeder {
             ['nom' => 'Direction des Ressources Humaines', 'type' => 'direction', 'code' => 'DRH'],
             ['nom' => 'Direction Administrative et Financière', 'type' => 'direction', 'code' => 'DAF'],
             ['nom' => 'Direction des Affaires Académiques', 'type' => 'direction', 'code' => 'DAA'],
-            ['nom' => 'UFR Sciences et Technologies', 'type' => 'ufr', 'code' => 'UFR-ST'],
-            ['nom' => 'UFR Sciences Économiques et Gestion', 'type' => 'ufr', 'code' => 'UFR-SEG'],
-            ['nom' => 'UFR Lettres et Sciences Humaines', 'type' => 'ufr', 'code' => 'UFR-LSH'],
-            ['nom' => 'UFR Sciences Juridiques et Politiques', 'type' => 'ufr', 'code' => 'UFR-SJP'],
+            ['nom' => "UFR Sciences Agronomiques, d'Élevage, de Pêche-Aquaculture et de Nutrition", 'type' => 'ufr', 'code' => 'SAEPAN'],
+            ['nom' => "UFR Sciences Fondamentales et de l'Ingénieur", 'type' => 'ufr', 'code' => 'SFI'],
+            ['nom' => 'UFR Sciences Sociales et Environnementales', 'type' => 'ufr', 'code' => 'SSE'],
+            ['nom' => 'UFR Sciences Économiques, Juridiques et Touristiques', 'type' => 'ufr', 'code' => 'SEJT'],
             ['nom' => 'Rectorat (Cabinet du Recteur)', 'type' => 'rectorat', 'code' => 'RECT'],
             ['nom' => 'Vice-Rectorat', 'type' => 'vice_rectorat', 'code' => 'VRECT'],
         ];
@@ -72,5 +72,8 @@ class DatabaseSeeder extends Seeder {
             ['nom' => "Noël", 'date' => '2026-12-25', 'annee' => 2026, 'recurrent' => true],
         ];
         foreach ($feries as $f) JourFerie::create($f);
+
+        // Agents de test (répartis sur les différentes structures)
+        $this->call(AgentSeeder::class);
     }
 }

@@ -8,7 +8,6 @@ use App\Models\Conge;
 use App\Models\LieuAffectation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller {
     public function index() {
@@ -42,12 +41,12 @@ class DashboardController extends Controller {
         // 2. Compte de l'effectif global réel
         $totalAgents = Agent::count();
 
-        // Répartition par sexe (colonnes existantes dans la migration)
+        // Répartition par sexe
         $totalHommes = Agent::where('sexe', 'M')->count();
         $totalFemmes = Agent::where('sexe', 'F')->count();
-        // Garder pour compatibilité avec la vue
-        $totalPER  = $totalHommes;
-        $totalPATS = $totalFemmes;
+        // Répartition par corps de personnel (colonne type_personnel)
+        $totalPER  = Agent::where('type_personnel', 'PER')->count();
+        $totalPATS = Agent::where('type_personnel', 'PATS')->count();
 
         // 3. Suivi des congés et des absences
         $congesEnCours = Conge::where('annee', $annee)
@@ -83,15 +82,12 @@ class DashboardController extends Controller {
             ->whereDate('date_reprise_service', '>=', now())
             ->get();
 
-        if (Schema::hasColumn('agents', 'conges_dus')) {
-            $agentsCritiques = Agent::with('lieuAffectation')
-                ->where('conges_dus', '>=', 48)
-                ->orderBy('conges_dus', 'desc')
-                ->take(10)
-                ->get();
-        } else {
-            $agentsCritiques = Agent::with('lieuAffectation')->take(5)->get();
-        }
+        // conges_dus est un attribut calculé (pas une colonne SQL), on filtre en PHP
+        $agentsCritiques = Agent::with('lieuAffectation')->get()
+            ->filter(fn($a) => $a->conges_dus >= 48)
+            ->sortByDesc('conges_dus')
+            ->take(10)
+            ->values();
 
         $ufrData = $agentsParLieu;
 

@@ -29,11 +29,11 @@
                 <span class="card-title-text"><i class="fas fa-sliders-h text-success me-2"></i>Critères d'extraction</span>
             </div>
             <div class="card-body">
-                <form id="formRapport" action="{{ route('rapports.generer') }}" method="POST">
+                <form action="#" method="POST" onsubmit="return false;">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label small fw-600 text-secondary">Modèle d'état</label>
-                        <select id="typeRapport" name="type_rapport" class="form-select select-custom">
+                        <select name="type_rapport" id="type_rapport" class="form-select select-custom">
                             <option value="conges">Planning récapitulatif des Congés</option>
                             <option value="effectifs">Registre matriculaire du Personnel</option>
                             <option value="alertes">Soldes Critiques (&ge; 48 jours)</option>
@@ -42,7 +42,7 @@
 
                     <div class="mb-3">
                         <label class="form-label small fw-600 text-secondary">Composante / UFR</label>
-                        <select id="structureCode" name="structure_code" class="form-select select-custom">
+                        <select name="structure_code" id="structure_code" class="form-select select-custom">
                             <option value="all">Toutes les composantes (Global)</option>
                             @foreach($structures as $struct)
                                 <option value="{{ $struct->code }}">{{ $struct->code }} - {{ $struct->nom }}</option>
@@ -52,7 +52,7 @@
 
                     <div class="mb-3">
                         <label class="form-label small fw-600 text-secondary">Corps de métier</label>
-                        <select id="corpsCode" name="corps_code" class="form-select select-custom">
+                        <select name="corps_code" class="form-select select-custom">
                             <option value="all">Tous les personnels</option>
                             @foreach($corpsPersonnel as $corps)
                                 <option value="{{ $corps->code }}">{{ $corps->nom }}</option>
@@ -63,15 +63,15 @@
                     <div class="row mb-4">
                         <div class="col-6">
                             <label class="form-label small fw-600 text-secondary">Du</label>
-                            <input type="date" id="dateDebut" name="date_debut" class="form-control input-custom" value="{{ now()->startOfYear()->format('Y-m-d') }}">
+                            <input type="date" name="date_debut" class="form-control input-custom" value="{{ now()->startOfYear()->format('Y-m-d') }}">
                         </div>
                         <div class="col-6">
                             <label class="form-label small fw-600 text-secondary">Au</label>
-                            <input type="date" id="dateFin" name="date_fin" class="form-control input-custom" value="{{ now()->format('Y-m-d') }}">
+                            <input type="date" name="date_fin" class="form-control input-custom" value="{{ now()->format('Y-m-d') }}">
                         </div>
                     </div>
 
-                    <button type="submit" id="btnPrevisualiser" class="btn btn-green-primary w-100"><i class="fas fa-sync me-2"></i> Prévisualiser l'état</button>
+                    <button type="button" id="btn-preview" class="btn btn-green-primary w-100"><i class="fas fa-sync me-2"></i> Prévisualiser l'état</button>
                 </form>
             </div>
         </div>
@@ -83,22 +83,12 @@
                 <span class="card-title-text"><i class="fas fa-layer-group text-success me-2"></i>Panneau d'exportation</span>
             </div>
             <div class="card-body">
-                <div id="rapportNotGennerated" class="p-4 border border-dashed rounded-3 text-center mb-4 bg-light-subtle">
+                <div class="p-4 border border-dashed rounded-3 text-center mb-4 bg-light-subtle">
                     <div class="d-flex justify-content-center mb-3">
                         <div class="report-icon-box bg-success-subtle text-success"><i class="fas fa-file-invoice"></i></div>
                     </div>
                     <h5 class="text-dark fw-600 mb-1">Aucun document chargé</h5>
                     <p class="small text-muted mb-0">Définissez vos filtres à gauche pour compiler les indicateurs réglementaires.</p>
-                </div>
-
-                <div id="rapportGenerated" style="display: none;" class="mb-4">
-                    <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
-                        <div>
-                            <i class="fas fa-check-circle me-2"></i>
-                            <span id="rapportTitle"></span>
-                        </div>
-                        <small id="rapportTime" class="text-muted"></small>
-                    </div>
                 </div>
 
                 <h6 class="fw-700 text-dark mb-3">Sélectionner un format de sortie :</h6>
@@ -113,15 +103,7 @@
                                         <small class="text-muted d-block" style="font-size: 0.75rem;">Idéal pour impression officielle</small>
                                     </div>
                                 </div>
-                                <form id="formPdf" style="display: none;" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="type_rapport">
-                                    <input type="hidden" name="structure_code">
-                                    <input type="hidden" name="corps_code">
-                                    <input type="hidden" name="date_debut">
-                                    <input type="hidden" name="date_fin">
-                                </form>
-                                <button id="btnPdf" class="btn btn-pdf px-3"><i class="fas fa-download"></i></button>
+                                <button type="button" id="btn-pdf" class="btn btn-pdf px-3"><i class="fas fa-download"></i></button>
                             </div>
                         </div>
                     </div>
@@ -136,7 +118,7 @@
                                         <small class="text-muted d-block" style="font-size: 0.75rem;">Idéal pour retraitements et statistiques</small>
                                     </div>
                                 </div>
-                                <button id="btnExcel" class="btn btn-excel px-3 disabled" disabled><i class="fas fa-download"></i></button>
+                                <button type="button" id="btn-csv" class="btn btn-excel px-3"><i class="fas fa-download"></i></button>
                             </div>
                         </div>
                     </div>
@@ -147,57 +129,43 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const formRapport = document.getElementById('formRapport');
-    const btnPrevisualiser = document.getElementById('btnPrevisualiser');
-    const btnPdf = document.getElementById('btnPdf');
-    const btnExcel = document.getElementById('btnExcel');
-    const rapportNotGenerated = document.getElementById('rapportNotGennerated');
-    const rapportGenerated = document.getElementById('rapportGenerated');
-    const formPdf = document.getElementById('formPdf');
+document.addEventListener('DOMContentLoaded', function () {
+    const structureSelect = document.getElementById('structure_code');
+    const previewBtn = document.getElementById('btn-preview');
+    const pdfBtn = document.getElementById('btn-pdf');
+    const csvBtn = document.getElementById('btn-csv');
 
-    // Soumettre le formulaire de rapport (HTML form submission)
-    formRapport.addEventListener('submit', function(e) {
-        // Laisser le formulaire se soumettre normalement
-        btnPrevisualiser.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Génération en cours...';
-        btnPrevisualiser.disabled = true;
+    // Base URL pour /rapports/{code}, /rapports/{code}/pdf et /rapports/{code}/csv
+    const rapportsBaseUrl = "{{ url('/rapports') }}";
+    const rapportGlobalPdfUrl = "{{ route('rapports.all') }}";
+    const rapportGlobalCsvUrl = "{{ route('rapports.all.csv') }}";
+
+    previewBtn.addEventListener('click', function () {
+        const code = structureSelect.value;
+        if (code === 'all') {
+            alert("Veuillez sélectionner une composante précise pour prévisualiser le tableau (le rapport global n'est disponible qu'en export PDF).");
+            return;
+        }
+        window.location.href = rapportsBaseUrl + '/' + encodeURIComponent(code);
     });
 
-    // Bouton PDF
-    btnPdf.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Copier les valeurs du formulaire principal
-        formPdf.action = '{{ route("rapports.pdf") }}';
-        formPdf.querySelector('input[name="type_rapport"]').value = document.getElementById('typeRapport').value;
-        formPdf.querySelector('input[name="structure_code"]').value = document.getElementById('structureCode').value;
-        formPdf.querySelector('input[name="corps_code"]').value = document.getElementById('corpsCode').value;
-        formPdf.querySelector('input[name="date_debut"]').value = document.getElementById('dateDebut').value;
-        formPdf.querySelector('input[name="date_fin"]').value = document.getElementById('dateFin').value;
-        
-        // Soumettre le formulaire
-        formPdf.submit();
+    pdfBtn.addEventListener('click', function () {
+        const code = structureSelect.value;
+        if (code === 'all') {
+            window.location.href = rapportGlobalPdfUrl;
+        } else {
+            window.location.href = rapportsBaseUrl + '/' + encodeURIComponent(code) + '/pdf';
+        }
     });
 
-    // Bouton Excel (pour le moment, juste affiche un message)
-    btnExcel.addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('La fonctionnalité Excel sera disponible prochainement.');
+    csvBtn.addEventListener('click', function () {
+        const code = structureSelect.value;
+        if (code === 'all') {
+            window.location.href = rapportGlobalCsvUrl;
+        } else {
+            window.location.href = rapportsBaseUrl + '/' + encodeURIComponent(code) + '/csv';
+        }
     });
-
-    // Afficher les statuts après génération (optionnel, s'il y a une redirection)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('rapport_generated') === '1') {
-        rapportNotGenerated.style.display = 'none';
-        rapportGenerated.style.display = 'block';
-        document.getElementById('rapportTitle').textContent = 'Rapport généré avec succès';
-        document.getElementById('rapportTime').textContent = new Date().toLocaleString('fr-FR');
-        
-        // Activer les boutons d'export
-        btnPdf.disabled = false;
-        btnExcel.disabled = false;
-        btnExcel.classList.remove('disabled');
-    }
 });
 </script>
 @endsection
