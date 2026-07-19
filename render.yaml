@@ -3,11 +3,13 @@ databases:
     databaseName: gestion_conges
     user: gestion_conges
     plan: free
+    region: frankfurt
 
 services:
   - type: web
     name: gestion-conges
     runtime: docker
+    region: frankfurt
     dockerfilePath: ./Dockerfile
     plan: free
     healthCheckPath: /up
