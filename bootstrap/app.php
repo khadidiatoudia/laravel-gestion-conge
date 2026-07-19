@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => App\Http\Middleware\AdminMiddleware::class,
         ]);
+
+        // Render (comme Heroku/Fly.io) place l'app derrière un proxy inverse.
+        // Sans ceci, Symfony peut rejeter le Host/X-Forwarded-* envoyé par le proxy.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

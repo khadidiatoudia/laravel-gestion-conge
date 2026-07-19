@@ -10,12 +10,14 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
-    healthCheckPath: /login
+    healthCheckPath: /up
     envVars:
       - key: APP_NAME
         value: "Gestion Congés Université"
       - key: APP_ENV
         value: production
+      - key: APP_URL
+        value: https://gestion-conges-r9q4.onrender.com
       - key: APP_DEBUG
         value: "false"
       - key: APP_LOCALE
