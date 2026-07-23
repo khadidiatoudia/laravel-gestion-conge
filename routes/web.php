@@ -8,6 +8,7 @@ use App\Http\Controllers\CongeController;
 use App\Http\Controllers\JourFerieController;
 use App\Http\Controllers\RapportController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 // La racine affiche la page d'accueil publique de l'application.
 Route::get('/', function () {
@@ -57,4 +58,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/agents/{agent}/conges', [CongeController::class, 'store'])->name('conges.store');
     Route::patch('/conges/{conge}/statut', [CongeController::class, 'updateStatut'])->name('conges.statut');
     Route::delete('/conges/{conge}', [CongeController::class, 'destroy'])->name('conges.destroy');
+});
+
+// ⚠️ ROUTE TEMPORAIRE — à supprimer après usage (pas de shell disponible sur le plan gratuit Render)
+// Protégée par un token secret défini via la variable d'environnement SEED_TOKEN sur Render.
+Route::get('/run-seed-once/{token}', function (string $token) {
+    if (!hash_equals((string) config('app.seed_token', ''), $token)) {
+        abort(404);
+    }
+
+    Artisan::call('db:seed', ['--force' => true]);
+
+    return '<pre>' . e(Artisan::output()) . '</pre>';
 });

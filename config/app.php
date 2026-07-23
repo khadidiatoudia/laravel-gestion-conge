@@ -54,6 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'seed_token' => env('SEED_TOKEN'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
