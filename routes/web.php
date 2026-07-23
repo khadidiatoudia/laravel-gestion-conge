@@ -1,73 +1,128 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AgentController;
-use App\Http\Controllers\AbsenceController;
-use App\Http\Controllers\CongeController;
-use App\Http\Controllers\JourFerieController;
-use App\Http\Controllers\RapportController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
+return [
 
-// La racine affiche la page d'accueil publique de l'application.
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+    /*
+    |--------------------------------------------------------------------------
+    | Application Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of your application, which will be used when the
+    | framework needs to place the application's name in a notification or
+    | other UI elements where an application name needs to be displayed.
+    |
+    */
 
-// Routes pour les invités (Non connectés)
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-});
+    'name' => env('APP_NAME', 'Laravel'),
 
-// Routes protégées (Nécessitent d'être connecté)
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        Route::get('/mon-compte', [AuthController::class, 'account'])->name('user.dashboard');
-    Route::middleware('admin')->group(function () {
-        Route::resource('agents', AgentController::class);
-        Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
-        Route::post('/agents/{agent}/link-user', [AgentController::class, 'attachUser'])->name('agents.linkUser');
-        Route::delete('/agents/{agent}/unlink-user', [AgentController::class, 'detachUser'])->name('agents.unlinkUser');
+    /*
+    |--------------------------------------------------------------------------
+    | Application Environment
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the "environment" your application is currently
+    | running in. This may determine how you prefer to configure various
+    | services the application utilizes. Set this in your ".env" file.
+    |
+    */
 
-        // Rapports & Exports PDF / Excel
-        Route::get('/rapports', [RapportController::class, 'index'])->name('rapports.index');
-        Route::get('/rapports/{lieu}', [RapportController::class, 'generer'])->name('rapports.generer');
-        Route::get('/rapports/{lieu}/pdf', [RapportController::class, 'exportPdf'])->name('rapports.pdf');
-        Route::get('/rapports/{lieu}/csv', [RapportController::class, 'exportCsv'])->name('rapports.csv');
-        Route::get('/rapports-global/pdf', [RapportController::class, 'exportAll'])->name('rapports.all');
-        Route::get('/rapports-global/csv', [RapportController::class, 'exportAllCsv'])->name('rapports.all.csv');
+    'env' => env('APP_ENV', 'production'),
 
-        // Jours Fériés
-        Route::get('/jours-feries', [JourFerieController::class, 'index'])->name('jours_feries.index');
-        Route::post('/jours-feries', [JourFerieController::class, 'store'])->name('jours_feries.store');
-        Route::delete('/jours-feries/{jourFerie}', [JourFerieController::class, 'destroy'])->name('jours_feries.destroy');
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Application Debug Mode
+    |--------------------------------------------------------------------------
+    |
+    | When your application is in debug mode, detailed error messages with
+    | stack traces will be shown on every error that occurs within your
+    | application. If disabled, a simple generic error page is shown.
+    |
+    */
 
-    // Gestion des Absences (admin ou utilisateur lié)
-    Route::get('/agents/{agent}/absences/create', [AbsenceController::class, 'create'])->name('absences.create');
-    Route::post('/agents/{agent}/absences', [AbsenceController::class, 'store'])->name('absences.store');
-    Route::delete('/absences/{absence}', [AbsenceController::class, 'destroy'])->name('absences.destroy');
+    'debug' => (bool) env('APP_DEBUG', false),
 
-    // Gestion des Congés (admin ou utilisateur lié)
-    Route::get('/agents/{agent}/conges/create', [CongeController::class, 'create'])->name('conges.create');
-    Route::post('/agents/{agent}/conges', [CongeController::class, 'store'])->name('conges.store');
-    Route::patch('/conges/{conge}/statut', [CongeController::class, 'updateStatut'])->name('conges.statut');
-    Route::delete('/conges/{conge}', [CongeController::class, 'destroy'])->name('conges.destroy');
-});
+    /*
+    |--------------------------------------------------------------------------
+    | Application URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used by the console to properly generate URLs when using
+    | the Artisan command line tool. You should set this to the root of
+    | the application so that it's available within Artisan commands.
+    |
+    */
 
-// ⚠️ ROUTE TEMPORAIRE — à supprimer après usage (pas de shell disponible sur le plan gratuit Render)
-// Protégée par un token secret défini via la variable d'environnement SEED_TOKEN sur Render.
-Route::get('/run-seed-once/{token}', function (string $token) {
-    if (!hash_equals((string) config('app.seed_token', ''), $token)) {
-        abort(404);
-    }
+    'url' => env('APP_URL', 'http://localhost'),
 
-    Artisan::call('db:seed', ['--force' => true]);
+    'seed_token' => env('SEED_TOKEN'),
 
-    return '<pre>' . e(Artisan::output()) . '</pre>';
-});
+    /*
+    |--------------------------------------------------------------------------
+    | Application Timezone
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the default timezone for your application, which
+    | will be used by the PHP date and date-time functions. The timezone
+    | is set to "UTC" by default as it is suitable for most use cases.
+    |
+    */
+
+    'timezone' => 'UTC',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Locale Configuration
+    |--------------------------------------------------------------------------
+    |
+    | The application locale determines the default locale that will be used
+    | by Laravel's translation / localization methods. This option can be
+    | set to any locale for which you plan to have translation strings.
+    |
+    */
+
+    'locale' => env('APP_LOCALE', 'en'),
+
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Encryption Key
+    |--------------------------------------------------------------------------
+    |
+    | This key is utilized by Laravel's encryption services and should be set
+    | to a random, 32 character string to ensure that all encrypted values
+    | are secure. You should do this prior to deploying the application.
+    |
+    */
+
+    'cipher' => 'AES-256-CBC',
+
+    'key' => env('APP_KEY'),
+
+    'previous_keys' => [
+        ...array_filter(
+            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
+        ),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Maintenance Mode Driver
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options determine the driver used to determine and
+    | manage Laravel's "maintenance mode" status. The "cache" driver will
+    | allow maintenance mode to be controlled across multiple machines.
+    |
+    | Supported drivers: "file", "cache"
+    |
+    */
+
+    'maintenance' => [
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
+
+];
