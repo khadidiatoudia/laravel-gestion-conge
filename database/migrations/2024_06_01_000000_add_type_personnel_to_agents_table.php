@@ -11,14 +11,18 @@ return new class extends Migration {
      * Valeur par défaut 'PATS' pour ne pas casser les agents déjà en base.
      */
     public function up(): void {
-        Schema::table('agents', function (Blueprint $table) {
-            $table->enum('type_personnel', ['PER', 'PATS'])->default('PATS')->after('sexe');
-        });
+        if (!Schema::hasColumn('agents', 'type_personnel')) {
+            Schema::table('agents', function (Blueprint $table) {
+                $table->enum('type_personnel', ['PER', 'PATS'])->default('PATS')->after('sexe');
+            });
+        }
     }
 
     public function down(): void {
-        Schema::table('agents', function (Blueprint $table) {
-            $table->dropColumn('type_personnel');
-        });
+        if (Schema::hasColumn('agents', 'type_personnel')) {
+            Schema::table('agents', function (Blueprint $table) {
+                $table->dropColumn('type_personnel');
+            });
+        }
     }
 };
