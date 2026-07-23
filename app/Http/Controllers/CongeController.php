@@ -3,9 +3,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\Conge;
+use App\Models\User;
 use App\Services\CongeCalculator;
 use App\Mail\CongeApprouve;
 use App\Mail\CongeRefuse;
+use App\Mail\NouvelleDemandeConge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -44,7 +46,7 @@ class CongeController extends Controller {
         $dateReprise = $calculator->calculerDateReprise($dateCessation, $joursAPrendre);
         $statut = Auth::user()->isAdmin() ? 'approuve' : 'en_attente';
 
-        Conge::create([
+        $conge = Conge::create([
             'agent_id' => $agent->id,
             'jours_a_prendre' => $joursAPrendre,
             'date_cessation_service' => $dateCessation,
@@ -54,6 +56,19 @@ class CongeController extends Controller {
             'observations' => $validated['observations'] ?? null,
             'deductible' => $deductible,
         ]);
+
+        // Si la demande est en attente (soumise par l'agent lui-même), on notifie
+        // les admins et gestionnaires RH pour qu'ils puissent la valider.
+        if ($statut === 'en_attente') {
+            $conge->load('agent.lieuAffectation');
+            $destinataires = User::whereIn('role', ['admin', 'gestionnaire'])
+                ->whereNotNull('email')
+                ->get();
+
+            foreach ($destinataires as $destinataire) {
+                Mail::to($destinataire->email)->send(new NouvelleDemandeConge($conge));
+            }
+        }
 
         $redirectRoute = Auth::user()->isAdmin() ? route('agents.show', $agent) : route('user.dashboard');
         return redirect($redirectRoute)->with('success', 'Congé enregistré. Date de reprise calculée : ' . $dateReprise->format('d/m/Y'));

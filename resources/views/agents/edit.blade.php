@@ -31,6 +31,14 @@
                 </select>
             </div>
             <div class="col-md-6">
+                <label class="form-label fw-500">Corps du personnel *</label>
+                <select name="type_personnel" class="form-select @error('type_personnel') is-invalid @enderror" required>
+                    <option value="PER" {{ old('type_personnel', $agent->type_personnel) == 'PER' ? 'selected' : '' }}>PER (Enseignant / Recherche)</option>
+                    <option value="PATS" {{ old('type_personnel', $agent->type_personnel) == 'PATS' ? 'selected' : '' }}>PATS (Admin / Technique / Service)</option>
+                </select>
+                @error('type_personnel') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+            <div class="col-md-6">
                 <label class="form-label fw-500">Date de Prise de Service *</label>
                 <input type="date" name="date_prise_service" class="form-control" value="{{ old('date_prise_service', $agent->date_prise_service->format('Y-m-d')) }}" required>
             </div>

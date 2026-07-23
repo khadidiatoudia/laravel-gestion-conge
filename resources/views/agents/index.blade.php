@@ -83,10 +83,10 @@
                                 </div>
                             </div>
                         </td>
-                        <td><span class="text-dark fw-500">{{ $agent->matricule }}</span></td>
-                        <td><span class="badge {{ ($agent->type_personnel ?? $agent->statut) == 'PER' ? 'bg-primary-subtle text-primary' : 'bg-warning-subtle text-warning-700' }} fw-600 px-2 py-1">{{ $agent->type_personnel ?? $agent->statut ?? 'PATS' }}</span></td>
+                        <td><span class="text-dark fw-500">{{ $agent->matricule_solde }}</span></td>
+                        <td><span class="badge {{ $agent->type_personnel == 'PER' ? 'bg-primary-subtle text-primary' : 'bg-warning-subtle text-warning-700' }} fw-600 px-2 py-1">{{ $agent->type_personnel }}</span></td>
                         <td><span class="badge-structure">{{ $agent->lieuAffectation->code ?? 'Non assigné' }}</span></td>
-                        <td><span class="text-success fw-600">{{ $agent->conges_restants ?? 30 }} j</span></td>
+                        <td><span class="text-success fw-600">{{ $agent->jours_restants }} j</span></td>
                         <td class="text-end pe-3">
                             <div class="d-inline-flex gap-1">
                                 <a href="{{ route('agents.show', $agent->id) }}" class="btn btn-sm btn-outline-custom border-0"><i class="fas fa-eye text-primary"></i></a>

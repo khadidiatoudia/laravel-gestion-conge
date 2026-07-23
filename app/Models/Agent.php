@@ -8,8 +8,8 @@ use Carbon\Carbon;
 
 class Agent extends Model {
     protected $fillable = [
-        'nom', 'prenom', 'matricule_solde', 'type_personnel', 'lieu_affectation_id',
-        'date_prise_service', 'sexe', 'nombre_enfants',
+        'nom', 'prenom', 'matricule_solde', 'lieu_affectation_id',
+        'date_prise_service', 'sexe', 'type_personnel', 'nombre_enfants',
         'conges_reportes', 'conges_exceptionnels', 'actif'
     ];
     protected $casts = ['date_prise_service' => 'date'];

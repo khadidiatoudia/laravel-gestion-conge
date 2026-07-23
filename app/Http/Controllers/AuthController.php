@@ -50,7 +50,7 @@ class AuthController extends Controller {
 
         Auth::login($user);
 
-        return redirect()->route('user.dashboard')->with('success', "Compte créé avec succès. " . ($user->agent ? "Votre solde de congés est disponible." : "Demandez l'association de votre profil agent à l'administrateur."));
+        return redirect()->route('user.dashboard')->with('success', 'Compte créé avec succès. ' . ($user->agent ? 'Votre solde de congés est disponible.' : 'Demandez l’association de votre profil agent à l’administrateur.'));
     }
 
     public function login(Request $request) {

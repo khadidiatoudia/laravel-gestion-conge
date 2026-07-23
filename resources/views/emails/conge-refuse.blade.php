@@ -1,22 +1,48 @@
-<x-mail::message>
-# Demande de Congé Refusée
-
-Bonjour {{ $agent->prenom }},
-
-Nous vous informons que votre demande de congé a été **refusée** par l'administrateur RH.
-
-**Détails de votre demande :**
-- **Agent :** {{ $agent->nom_complet }}
-- **Période demandée :** du {{ $conge->date_cessation_service->format('d/m/Y') }} au {{ $conge->date_reprise_service?->format('d/m/Y') ?? '-' }}
-- **Nombre de jours demandés :** {{ $conge->jours_a_prendre }} jour(s)
-- **Statut :** Refusée
-
-Veuillez contacter l'administrateur RH pour plus de détails ou pour toute question.
-
-<x-mail::button :url="url('/')">
-Accéder à votre compte
-</x-mail::button>
-
-Cordialement,
-**Service RH USSEIN**
-</x-mail::message>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Demande de Congé Refusée</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f7f4;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f7f4;padding:30px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;">
+                    <tr>
+                        <td style="background-color:#142a1e;padding:24px 32px;">
+                            <span style="color:#ffffff;font-size:18px;font-weight:bold;">USSEIN — Gestion des Congés</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:32px;">
+                            <h1 style="color:#1c2621;font-size:22px;margin:0 0 16px;">Demande de Congé Refusée</h1>
+                            <p style="color:#1c2621;font-size:15px;line-height:1.5;">Bonjour {{ $agent->prenom }},</p>
+                            <p style="color:#1c2621;font-size:15px;line-height:1.5;">
+                                Nous vous informons que votre demande de congé a été <strong>refusée</strong> par l'administrateur RH.
+                            </p>
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f7f4;border-radius:6px;margin:20px 0;">
+                                <tr>
+                                    <td style="padding:16px 20px;font-size:14px;color:#1c2621;">
+                                        <strong>Agent :</strong> {{ $agent->nom_complet }}<br>
+                                        <strong>Période demandée :</strong> du {{ $conge->date_cessation_service->format('d/m/Y') }} au {{ $conge->date_reprise_service?->format('d/m/Y') ?? '-' }}<br>
+                                        <strong>Nombre de jours demandés :</strong> {{ $conge->jours_a_prendre }} jour(s)<br>
+                                        <strong>Statut :</strong> <span style="color:#c0392b;font-weight:bold;">Refusée</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color:#1c2621;font-size:15px;line-height:1.5;">
+                                Veuillez contacter l'administrateur RH pour plus de détails ou pour toute question.
+                            </p>
+                            <p style="text-align:center;margin:28px 0;">
+                                <a href="{{ url('/') }}" style="background-color:#e2a73b;color:#142a1e;text-decoration:none;padding:12px 28px;border-radius:6px;font-weight:bold;font-size:14px;display:inline-block;">Accéder à votre compte</a>
+                            </p>
+                            <p style="color:#5b6b62;font-size:13px;line-height:1.5;">Cordialement,<br><strong>Service RH USSEIN</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

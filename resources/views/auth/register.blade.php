@@ -7,23 +7,6 @@
         <h2>Créer un compte</h2>
         <p class="lead">Inscrivez-vous pour gérer vos congés, consulter vos absences et suivre votre solde.</p>
 
-        @if(session('success'))
-            <div class="alert alert-success mb-3" style="background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.3);color:#bbf7d0;">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="alert alert-danger mb-3" style="background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.3);color:#fecaca;">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                <ul class="mb-0 ps-3">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <form method="POST" action="{{ route('register') }}">
             @csrf
             <div class="mb-3">
